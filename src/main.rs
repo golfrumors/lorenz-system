@@ -1,8 +1,9 @@
 extern crate gnuplot;
+use std::io;
 use crate::gnuplot::AxesCommon;
 use gnuplot::{Figure, Caption, Color, DashType};
 
-fn main(){
+fn main() -> io::Result<()> {
 
     //our constants that generate the chaotic behaviour we want
     let sigma = 10.0;
@@ -26,8 +27,22 @@ fn main(){
     let mut y_values = vec![y0];
     let mut z_values = vec![z0];
 
+    //get user input to determine iterations
+    let mut input = String::new();
+    println!("Input the number of iterations to pass through: ");
+    io::stdin().read_line(&mut input)?;
+
+    let iterations = match input.trim().parse::<i32>() {
+        Ok(n) => n,
+        Err(e) => {
+            println!("Error: {}", e);
+            return Ok(());
+        }
+    };
+
+    
     //loop through and calculate the next state using the Lorenz equations
-    while t < 100.0 {
+    while t < iterations as f64 {
         let dx = sigma * (y - x);
         let dy = x * (rho - z) - y;
         let dz = x * y - beta * z;
@@ -55,4 +70,6 @@ fn main(){
     if result.is_err() {
         println!("Error: {}", result.err().unwrap());
     }
+
+    Ok(())
 }
