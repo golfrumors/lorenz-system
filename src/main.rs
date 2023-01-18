@@ -1,44 +1,43 @@
 extern crate gnuplot;
-use std::error::Error;
 use crate::gnuplot::AxesCommon;
 use gnuplot::{Figure, Caption, Color, DashType};
 
-/*
- *starter values:
- *sigma = 10
- *beta = 8/3
- *rho = 28
- */
+fn main(){
 
-
-fn main() -> Result<(), Box<dyn Error>>{
-
-    //our constants to create a lorenz attractor
+    //our constants that generate the chaotic behaviour we want
     let sigma = 10.0;
     let beta = 8.0 / 3.0;
     let rho = 28.0;
 
-    //working variables
-    let mut x = 1.0;
-    let mut y = 1.0;
-    let mut z = 1.0;
+    //initial conditions
+    let x0 = 1.0;
+    let y0 = 1.0;
+    let z0 = 1.0;
+
+    //variables used to solve the Lorenz system
+    let dt = 0.01;
+    let mut t = 0.0;
+    let mut x = x0;
+    let mut y = y0;
+    let mut z = z0;
 
     //value vectors
-    let mut x_values = Vec::new();
-    let mut y_values = Vec::new();
-    let mut z_values = Vec::new();
-
-    //step size
-    let mut t = 0.01;
+    let mut x_values = vec![x0];
+    let mut y_values = vec![y0];
+    let mut z_values = vec![z0];
 
     //loop through and calculate the next state using the Lorenz equations
-    while t < 10000.0 {
-        let x = x + t * sigma * (y - x);
-        let y = y + t * (x * (rho - z) - y);
-        let z = z + t * (x * y - beta * z);
-        t = t + 0.01;
+    while t < 100.0 {
+        let dx = sigma * (y - x);
+        let dy = x * (rho - z) - y;
+        let dz = x * y - beta * z;
 
-        //add the values to the vectors
+        x += dx * dt;
+        y += dy * dt;
+        z += dz * dt;
+
+        t += dt;
+
         x_values.push(x);
         y_values.push(y);
         z_values.push(z);
@@ -56,6 +55,4 @@ fn main() -> Result<(), Box<dyn Error>>{
     if result.is_err() {
         println!("Error: {}", result.err().unwrap());
     }
-
-    Ok(())
 }
