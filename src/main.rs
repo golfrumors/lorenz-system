@@ -50,7 +50,6 @@ fn main() -> io::Result<()> {
         x += dx * dt;
         y += dy * dt;
         z += dz * dt;
-
         t += dt;
 
         x_values.push(x);
